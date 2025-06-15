@@ -4,5 +4,9 @@ dotenv.config();
 import { initMongoConnection } from './db/initMongoConnection.js';
 import { setupServer } from './server.js';
 
-await initMongoConnection();
-setupServer();
+const start = async () => {
+  await initMongoConnection();
+  await setupServer();
+};
+
+start();
