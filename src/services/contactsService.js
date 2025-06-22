@@ -1,5 +1,6 @@
 import { Contact } from '../models/contactModel.js';
 
+
 export const getAllContacts = async () => {
   const contacts = await Contact.find();
   return contacts;
@@ -20,3 +21,15 @@ export const removeContact = async (contactId) => {
     return deletedContact;
 };
   
+export const updateContact = async (contactId, updateData) => {
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, updateData, {
+      new: true,
+      runValidators: true,
+    });
+    return updatedContact;
+};
+  
+export const getContactsByType = async (type) => {
+    const contacts = await Contact.find({ contactType: type });
+    return contacts;
+  };

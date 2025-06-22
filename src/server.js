@@ -2,9 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino';
 import { initMongoConnection } from './db/initMongoConnection.js';
-import { handleGetAllContacts } from './controllers/contactsController.js';
-import { handleGetContactById } from './controllers/contactsController.js';
-import { handleAddContact, handleRemoveContact } from './controllers/contactsController.js';
+import contactsRouter from './routers/contactsRouter.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+
 
 const logger = pino(({
   transport: {
@@ -21,15 +22,13 @@ export const setupServer = async () => {
   app.use(cors());
   app.use(express.json());
 
-  app.get('/contacts', handleGetAllContacts);
-  app.get('/contacts/:contactId', handleGetContactById);
-  app.post('/contacts', handleAddContact);
-  app.delete('/contacts/:contactId', handleRemoveContact);
+  app.use('/contacts', contactsRouter);
 
-  // Not found handler
-  app.use((req, res) => {
-    res.status(404).json({ message: 'Not found' });
-  });
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+
+
+  
 
   const PORT = process.env.PORT || 10000;
 
