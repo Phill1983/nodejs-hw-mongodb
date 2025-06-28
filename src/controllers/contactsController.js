@@ -1,44 +1,59 @@
-import {
-  getAllContacts,
-  getContactById,
-  addContact,
-  updateContact,
-  removeContact,
-  getContactsByType,
-} from '../services/contactsService.js';
+import Contact from '../models/contactModel.js';
 import createError from 'http-errors';
-
 import mongoose from 'mongoose';
 
+// ===== GET ALL =====
 export const handleGetAllContacts = async (req, res) => {
+  const {
+    type,
+    isFavourite,
+    page = 1,
+    perPage = 10,
+    sortBy = "name",
+    sortOrder = "asc",
+  } = req.query;
 
-  const { type } = req.query;
-  let contacts;
+  const filter = {};
 
   if (type) {
-    contacts = await getContactsByType(type);
+    filter.contactType = type;
+  }
 
-    if (contacts.length === 0) {
-      throw createError(404, `No contacts found with type: ${type}`);
-    }
+  if (isFavourite !== undefined) {
+    filter.isFavourite = isFavourite === "true";
+  }
 
-    res.status(200).json({
-      status: 200,
-      message: `Successfully found contacts with type: ${type}`,
+  const skip = (page - 1) * perPage;
+  const sortDirection = sortOrder === "desc" ? -1 : 1;
+
+  const totalItems = await Contact.countDocuments(filter);
+  const totalPages = Math.ceil(totalItems / perPage);
+
+  const contacts = await Contact.find(filter)
+    .sort({ [sortBy]: sortDirection })
+    .skip(skip)
+    .limit(Number(perPage));
+
+  if (contacts.length === 0) {
+    throw createError(404, "No contacts found");
+  }
+
+  res.status(200).json({
+    status: 200,
+    message: "Successfully found contacts!",
+    data: {
       data: contacts,
-    });
-    
-  } else {
-    contacts = await getAllContacts();
-
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully found contacts!',
-      data: contacts,
-    });
-  };
+      page: Number(page),
+      perPage: Number(perPage),
+      totalItems,
+      totalPages,
+      hasPreviousPage: Number(page) > 1,
+      hasNextPage: Number(page) < totalPages,
+    },
+  });
 };
 
+// ===== GET BY ID =====
 export const handleGetContactById = async (req, res) => {
   const { contactId } = req.params;
 
@@ -46,7 +61,7 @@ export const handleGetContactById = async (req, res) => {
     throw createError(400, 'Invalid contact ID format');
   }
 
-  const contact = await getContactById(contactId);
+  const contact = await Contact.findById(contactId);
 
   if (!contact) {
     throw createError(404, 'Contact not found');
@@ -59,6 +74,7 @@ export const handleGetContactById = async (req, res) => {
   });
 };
 
+// ===== ADD CONTACT =====
 export const handleAddContact = async (req, res) => {
   const contactData = req.body;
 
@@ -69,7 +85,7 @@ export const handleAddContact = async (req, res) => {
     }
   }
 
-  const newContact = await addContact(contactData);
+  const newContact = await Contact.create(contactData);
 
   res.status(201).json({
     status: 201,
@@ -78,6 +94,7 @@ export const handleAddContact = async (req, res) => {
   });
 };
 
+// ===== REMOVE CONTACT =====
 export const handleRemoveContact = async (req, res) => {
   const { contactId } = req.params;
 
@@ -85,7 +102,7 @@ export const handleRemoveContact = async (req, res) => {
     throw createError(400, 'Invalid contact ID format');
   }
 
-  const deletedContact = await removeContact(contactId);
+  const deletedContact = await Contact.findByIdAndDelete(contactId);
 
   if (!deletedContact) {
     throw createError(404, 'Contact not found');
@@ -98,6 +115,7 @@ export const handleRemoveContact = async (req, res) => {
   });
 };
 
+// ===== UPDATE CONTACT =====
 export const handleUpdateContact = async (req, res) => {
   const { contactId } = req.params;
   const updateData = req.body;
@@ -106,7 +124,9 @@ export const handleUpdateContact = async (req, res) => {
     throw createError(400, 'Invalid contact ID format');
   }
 
-  const updatedContact = await updateContact(contactId, updateData);
+  const updatedContact = await Contact.findByIdAndUpdate(contactId, updateData, {
+    new: true,
+  });
 
   if (!updatedContact) {
     throw createError(404, 'Contact not found');
