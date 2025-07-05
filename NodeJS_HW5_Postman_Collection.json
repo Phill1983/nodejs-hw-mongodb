@@ -6,7 +6,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:3000/api"
+      "value": "https://nodejs-hw-mongodb-ept4.onrender.com"
     },
     {
       "key": "accessToken",
@@ -34,13 +34,8 @@
         },
         "url": {
           "raw": "{{baseUrl}}/auth/register",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "auth",
-            "register"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "register"]
         }
       }
     },
@@ -60,13 +55,8 @@
         },
         "url": {
           "raw": "{{baseUrl}}/auth/login",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "auth",
-            "login"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "login"]
         }
       }
     },
@@ -77,13 +67,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/auth/refresh",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "auth",
-            "refresh"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "refresh"]
         }
       }
     },
@@ -94,13 +79,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/auth/logout",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "auth",
-            "logout"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "logout"]
         }
       }
     },
@@ -116,12 +96,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/contacts",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "contacts"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["contacts"]
         }
       }
     },
@@ -137,13 +113,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/contacts/{{contactId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "contacts",
-            "{{contactId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["contacts", "{{contactId}}"]
         }
       }
     },
@@ -167,12 +138,8 @@
         },
         "url": {
           "raw": "{{baseUrl}}/contacts",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "contacts"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["contacts"]
         }
       }
     },
@@ -196,13 +163,8 @@
         },
         "url": {
           "raw": "{{baseUrl}}/contacts/{{contactId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "contacts",
-            "{{contactId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["contacts", "{{contactId}}"]
         }
       }
     },
@@ -218,13 +180,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/contacts/{{contactId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "contacts",
-            "{{contactId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["contacts", "{{contactId}}"]
         }
       }
     }
