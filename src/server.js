@@ -1,8 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino';
-// import { handleGetAllContacts } from './controllers/contactsController.js';
-// import { handleGetContactById } from './controllers/contactsController.js';
 import contactsRouter from './routers/contacts.js';
 import authRouter from './routers/auth.js';
 import cookieParser from 'cookie-parser';
@@ -25,9 +23,6 @@ export const setupServer = () => {
   app.use('/contacts', contactsRouter);
   app.use('/auth', authRouter);
  
-
-  // app.get('/contacts', handleGetAllContacts);
-  // app.get('/contacts/:contactId', handleGetContactById);
 
   // Not found handler
   app.use((req, res) => {

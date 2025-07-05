@@ -1,5 +1,7 @@
 import * as authService from '../services/auth.js';
+
 // контроллер регістрації
+
 export const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -19,7 +21,9 @@ export const register = async (req, res, next) => {
     next(error);
   }
 };
+
 // контроллер логіну
+
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -43,11 +47,12 @@ export const login = async (req, res, next) => {
     next(error);
   }
 };
+
 // контроллер для оновлення сесії
 
 export const refresh = async (req, res, next) => {
     try {
-      const oldRefreshToken = req.cookies.refreshToken; // <-- тепер буде ок
+      const oldRefreshToken = req.cookies.refreshToken; 
       const { accessToken, refreshToken } = await authService.refreshSession(oldRefreshToken);
   
       res.cookie('refreshToken', refreshToken, {

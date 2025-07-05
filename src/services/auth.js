@@ -9,7 +9,7 @@ import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../config.js';
 const SALT_ROUNDS = 10;
 
 
-// 🔑 Реєстрація користувача
+//  Реєстрація користувача
 export const registerUser = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
 
@@ -28,7 +28,7 @@ export const registerUser = async ({ name, email, password }) => {
   return newUser;
 };
 
-// 🔑 Логін користувача
+//  Логін користувача
 export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
 
@@ -72,7 +72,7 @@ export const loginUser = async ({ email, password }) => {
   return { accessToken, refreshToken };
 };
 
-// 🔑 Оновлення сесії
+//  Оновлення сесії
 export const refreshSession = async (oldRefreshToken) => {
   const session = await Session.findOne({ refreshToken: oldRefreshToken });
 
@@ -114,7 +114,7 @@ export const refreshSession = async (oldRefreshToken) => {
   return { accessToken, refreshToken };
 };
 
-// 🔑 Логаут користувача
+//  Логаут користувача
 export const logoutUser = async (refreshToken) => {
   const session = await Session.findOne({ refreshToken });
 
