@@ -6,7 +6,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://nodejs-hw-mongodb-ept4.onrender.com/api"
+      "value": "https://nodejs-hw-mongodb-ept4.onrender.com"
     },
     {
       "key": "accessToken",
