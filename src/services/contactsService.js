@@ -1,7 +1,7 @@
 import { Contact } from '../models/contactModel.js';
 
 export const getAllContacts = async (userId, skip, limit) => {
-  return await Contact.find({ userId }, '', { skip, limit: Number(limit) });
+  return await Contact.find({ userId }, '-__v', { skip, limit: Number(limit) });
 };
 
 export const getAllContactsCount = async (userId) => {
@@ -9,7 +9,7 @@ export const getAllContactsCount = async (userId) => {
 };
 
 export const getContactById = async (contactId, userId) => {
-  return Contact.findOne({ _id: contactId, userId });
+  return Contact.findOne({ _id: contactId, userId }, '-__v');
 };
 
 export const createContact = async (contactData) => {
