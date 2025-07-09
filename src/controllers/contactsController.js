@@ -4,24 +4,26 @@ export const getAllContactsController = async (req, res) => {
   try {
     const userId = req.user._id;
 
-   
     const { page = 1, limit = 10 } = req.query;
     const skip = (page - 1) * limit;
 
-  
     const contacts = await getAllContacts(userId, skip, limit);
+    const total = await getAllContactsCount(userId);
 
-
-    const total = await getAllContactsCount(userId); 
+    const perPage = Number(limit);
+    const totalPages = Math.ceil(total / perPage);
 
     res.status(200).json({
       status: 200,
       message: 'Successfully found contacts!',
       data: {
-        contacts,
-        total,
+        data: contacts,
         page: Number(page),
-        limit: Number(limit)
+        perPage: perPage,
+        totalItems: total,
+        totalPages: totalPages,
+        hasPreviousPage: Number(page) > 1,
+        hasNextPage: Number(page) < totalPages,
       },
     });
   } catch (error) {
