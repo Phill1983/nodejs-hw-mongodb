@@ -1,16 +1,43 @@
 import { getAllContacts, getAllContactsCount, getContactById, createContact, updateContact, deleteContact } from '../services/contactsService.js';
 
+// export const getAllContactsController = async (req, res) => {
+//   try {
+//     const userId = req.user._id;
+
+//     const { page = 1, perPage = 10 } = req.query;
+//     const skip = (page - 1) * perPage;
+
+//     const contacts = await getAllContacts(userId, skip, perPage);
+//     const total = await getAllContactsCount(userId);
+//     const totalPages = Math.ceil(total / perPage);
+
+//     res.status(200).json({
+//       status: 200,
+//       message: 'Successfully found contacts!',
+//       data: {
+//         data: contacts,
+//         page: Number(page),
+//         perPage: perPage,
+//         totalItems: total,
+//         totalPages: totalPages,
+//         hasPreviousPage: Number(page) > 1,
+//         hasNextPage: Number(page) < totalPages,
+//       },
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// };
+
 export const getAllContactsController = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    const { page = 1, limit = 10 } = req.query;
-    const skip = (page - 1) * limit;
+    const { page = 1, perPage = 10, sortBy = 'createdAt', sortOrder = 'asc' } = req.query;
+    const skip = (page - 1) * perPage;
 
-    const contacts = await getAllContacts(userId, skip, limit);
+    const contacts = await getAllContacts(userId, skip, perPage, sortBy, sortOrder);
     const total = await getAllContactsCount(userId);
-
-    const perPage = Number(limit);
     const totalPages = Math.ceil(total / perPage);
 
     res.status(200).json({
@@ -19,7 +46,7 @@ export const getAllContactsController = async (req, res) => {
       data: {
         data: contacts,
         page: Number(page),
-        perPage: perPage,
+        perPage: Number(perPage),
         totalItems: total,
         totalPages: totalPages,
         hasPreviousPage: Number(page) > 1,
@@ -81,6 +108,9 @@ export const updateContactController = async (req, res) => {
     if (!updatedContact) {
       return res.status(404).json({ message: 'Contact not found' });
     }
+
+    const cleanContact = updatedContact.toObject ? updatedContact.toObject() : updatedContact;
+    delete cleanContact.__v;
 
     res.status(200).json({
       status: 200,
