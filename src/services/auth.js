@@ -6,6 +6,9 @@ import User from '../models/userModel.js';
 import Session from '../models/sessionModel.js';
 import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../config.js';
 
+import transporter from "./email.js";
+
+
 const SALT_ROUNDS = 10;
 
 
@@ -123,4 +126,35 @@ export const logoutUser = async (refreshToken) => {
   }
 
   await Session.findOneAndDelete({ refreshToken });
+};
+
+
+
+export const findUserByEmail = async (email) => {
+  const user = await User.findOne({ email });
+  return user;
+};
+
+export const createResetToken = ({ email }) => {
+  const payload = { email };
+  const options = { expiresIn: "5m" };
+  const token = jwt.sign(payload, process.env.JWT_SECRET, options);
+  return token;
+};
+
+export const sendResetEmail = async ({ to, resetLink }) => {
+  const mailOptions = {
+    from: process.env.SMTP_FROM,
+    to,
+    subject: "Password Reset",
+    html: `<p>Click the link to reset your password:</p><p><a href="${resetLink}">${resetLink}</a></p>`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    return false;
+  }
 };

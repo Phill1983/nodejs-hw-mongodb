@@ -1,4 +1,5 @@
 import * as authService from '../services/auth.js';
+import createHttpError from "http-errors";
 
 // контроллер регістрації
 
@@ -87,6 +88,48 @@ export const refresh = async (req, res, next) => {
       });
   
       res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  };
+  
+
+
+
+  export const sendResetEmail = async (req, res, next) => {
+    try {
+      const { email } = req.body;
+  
+      // Перевіряємо, чи є користувач у базі
+      const user = await authService.findUserByEmail(email);
+      if (!user) {
+        throw createHttpError(404, "User not found!");
+      }
+  
+      // Генеруємо токен
+      const token = authService.createResetToken({ email });
+  
+      // Формуємо посилання
+      const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
+  
+      // Пробуємо відправити листа
+      const emailResult = await authService.sendResetEmail({
+        to: email,
+        resetLink,
+      });
+  
+      if (!emailResult) {
+        throw createHttpError(
+          500,
+          "Failed to send the email, please try again later."
+        );
+      }
+  
+      res.status(200).json({
+        status: 200,
+        message: "Reset password email has been successfully sent.",
+        data: {},
+      });
     } catch (error) {
       next(error);
     }
