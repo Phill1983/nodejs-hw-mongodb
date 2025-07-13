@@ -37,7 +37,7 @@ export const cloudinaryUpload = async (req, res, next) => {
 
     bufferToStream(req.file.buffer).pipe(stream);
   } catch (error) {
-
+console.error('Upload error:', error); // ⬅️ лог для діагностики
     next(HttpError(500, 'Unexpected upload error'));
   }
 };
