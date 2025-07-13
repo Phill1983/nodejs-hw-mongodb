@@ -63,7 +63,17 @@ MONGODB_DB=contactsDB
 PORT=3000
 JWT_ACCESS_SECRET=your_access_secret
 JWT_REFRESH_SECRET=your_refresh_secret
+JWT_RESET_SECRET=your_refresh_secret
 
+CLOUDINARY_NAME=ypur_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_secret
+SMTP_HOST=smtp-relay.brevo.com
+SMTP_PORT=587
+SMTP_USER=your_brevo_user
+SMTP_PASS=your_brevo_password
+SMTP_FROM=your_email@gmail.com
+APP_DOMAIN=http://localhost:3000
 ---
 
 ## Виконавець
