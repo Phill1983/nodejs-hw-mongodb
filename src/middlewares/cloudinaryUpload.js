@@ -1,13 +1,18 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import HttpError from '../utils/HttpError.js';
 import { Readable } from 'stream';
 
 export const cloudinaryUpload = async (req, res, next) => {
   try {
+    // Якщо немає файлу — йдемо далі
+    if (!req.file) return next();
 
-    if (!req.file) return next(); // якщо немає фото — йдемо далі
+    // Перевірка буфера
+    if (!req.file.buffer) {
+      throw new Error('File buffer is missing');
+    }
 
+    // Буфер у потік
     const bufferToStream = (buffer) => {
       const readable = new Readable();
       readable.push(buffer);
@@ -15,29 +20,33 @@ export const cloudinaryUpload = async (req, res, next) => {
       return readable;
     };
 
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: 'contacts',
-        resource_type: 'image',
-      },
-      (error, result) => {
-        if (error) {
-  
-          return next(HttpError(500, 'Cloudinary upload failed'));
+    // Завантаження у Cloudinary через проміс
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'contacts',
+          resource_type: 'image',
+        },
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
         }
+      );
 
-      req.body.photo = {
-  url: result.secure_url,
-  public_id: result.public_id,
-};
+      bufferToStream(req.file.buffer).pipe(stream);
+    });
 
-        next();
-      }
-    );
+    // Зберігаємо результат у req.body
+    req.body.photo = {
+      url: result.secure_url,
+      public_id: result.public_id,
+    };
 
-    bufferToStream(req.file.buffer).pipe(stream);
+    next();
   } catch (error) {
-console.error('Upload error:', error); // ⬅️ лог для діагностики
+    console.error('Upload error:', error);
     next(HttpError(500, 'Unexpected upload error'));
   }
 };
