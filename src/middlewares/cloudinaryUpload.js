@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinary';
+import cloudinary from '../config/cloudinary.js';
 import HttpError from '../utils/HttpError.js';
 import { Readable } from 'stream';
 
@@ -22,6 +22,11 @@ export const cloudinaryUpload = async (req, res, next) => {
 
     // Завантаження у Cloudinary через проміс
     const result = await new Promise((resolve, reject) => {
+      console.log('Cloudinary env config:', {
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET ? 'OK' : 'MISSING',
+});
       const stream = cloudinary.uploader.upload_stream(
         {
           folder: 'contacts',
