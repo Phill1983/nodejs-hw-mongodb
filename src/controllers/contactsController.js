@@ -58,8 +58,7 @@ const createContactController = async (req, res) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
   const userId = req.user._id;
 
-  const photo = req.file?.cloudStorageObject || null;
-
+  const photo = req.body.photo || null;
   const newContact = await createContact({
     name,
     phoneNumber,
@@ -76,7 +75,6 @@ const createContactController = async (req, res) => {
     data: newContact,
   });
 };
-
 // Оновити контакт
 const updateContactController = async (req, res) => {
   const { contactId } = req.params;
