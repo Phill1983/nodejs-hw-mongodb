@@ -1,10 +1,6 @@
 import { Contact } from '../models/contactModel.js';
 
-// export const getAllContacts = async (userId, skip, limit) => {
-//   return await Contact.find({ userId }, '-__v', { skip, limit: Number(limit) });
-// };
-
-
+// Отримання всіх контактів користувача з пагінацією і сортуванням
 export const getAllContacts = async (userId, skip, perPage, sortBy, sortOrder) => {
   const sortDirection = sortOrder === 'desc' ? -1 : 1;
   const sortObj = {};
@@ -16,33 +12,33 @@ export const getAllContacts = async (userId, skip, perPage, sortBy, sortOrder) =
     .limit(Number(perPage));
 };
 
-// export const getAllContactsCount = async (userId) => {
-//   return Contact.countDocuments({ userId });
-// };
-
+// Отримання кількості контактів користувача
 export const getAllContactsCount = async (userId) => {
-  return await Contact.countDocuments({ userId });
+  return Contact.countDocuments({ userId });
 };
 
+// Отримання контакту за ID
 export const getContactById = async (contactId, userId) => {
   return Contact.findOne({ _id: contactId, userId }, '-__v');
 };
 
+// Створення нового контакту
 export const createContact = async (contactData) => {
-  return Contact.create(contactData, '-__v');
+  const newContact = await Contact.create(contactData);
+  const { __v, ...cleanedContact } = newContact.toObject();
+  return cleanedContact;
 };
 
+// Оновлення існуючого контакту
 export const updateContact = async (contactId, userId, updateData) => {
-
-  
-
   return Contact.findOneAndUpdate(
     { _id: contactId, userId },
     updateData,
-    { new: true }, '-__v'
-  );
+    { new: true } // не використовуємо projection, бо підтримується не у всіх версіях
+  ).select('-__v');
 };
 
+// Видалення контакту
 export const deleteContact = async (contactId, userId) => {
   return Contact.findOneAndDelete({ _id: contactId, userId });
 };

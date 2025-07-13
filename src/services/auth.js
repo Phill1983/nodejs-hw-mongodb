@@ -1,7 +1,7 @@
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import createHttpError from 'http-errors';
+import HttpError from '../utils/HttpError.js';
 import User from '../models/userModel.js';
 import Session from '../models/sessionModel.js';
 import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../config.js';
@@ -17,7 +17,7 @@ export const registerUser = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    throw createHttpError(409, 'Email in use');
+    throw HttpError(409, 'Email in use');
   }
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -36,13 +36,13 @@ export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw createHttpError(401, 'Invalid email or password');
+    throw HttpError(401, 'Invalid email or password');
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
-    throw createHttpError(401, 'Invalid email or password');
+    throw HttpError(401, 'Invalid email or password');
   }
 
 
@@ -80,11 +80,11 @@ export const refreshSession = async (oldRefreshToken) => {
   const session = await Session.findOne({ refreshToken: oldRefreshToken });
 
   if (!session) {
-    throw createHttpError(401, 'Invalid refresh token');
+    throw HttpError(401, 'Invalid refresh token');
   }
 
   if (session.refreshTokenValidUntil < new Date()) {
-    throw createHttpError(401, 'Refresh token expired');
+    throw HttpError(401, 'Refresh token expired');
   }
 
   const userId = session.userId;
@@ -122,7 +122,7 @@ export const logoutUser = async (refreshToken) => {
   const session = await Session.findOne({ refreshToken });
 
   if (!session) {
-    throw createHttpError(401, 'Invalid refresh token');
+    throw HttpError(401, 'Invalid refresh token');
   }
 
   await Session.findOneAndDelete({ refreshToken });
@@ -138,7 +138,7 @@ export const findUserByEmail = async (email) => {
 export const createResetToken = ({ email }) => {
   const payload = { email };
   const options = { expiresIn: "5m" };
-  const token = jwt.sign(payload, process.env.JWT_SECRET, options);
+  const token = jwt.sign(payload, process.env.JWT_RESET_SECRET, options);
   return token;
 };
 
@@ -154,7 +154,25 @@ export const sendResetEmail = async ({ to, resetLink }) => {
     await transporter.sendMail(mailOptions);
     return true;
   } catch (error) {
-    console.error("Failed to send email:", error);
+
     return false;
   }
+};
+
+export const verifyResetToken = async (token) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_RESET_SECRET);
+    return decoded; // { email }
+  } catch {
+    throw HttpError(401, "Token is expired or invalid.");
+  }
+};
+
+export const updateUserPassword = async (userId, newPassword) => {
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  await User.findByIdAndUpdate(userId, { password: hashedPassword });
+};
+
+export const deleteUserSession = async (userId) => {
+  await Session.deleteMany({ userId });
 };

@@ -1,139 +1,148 @@
-import { getAllContacts, getAllContactsCount, getContactById, createContact, updateContact, deleteContact } from '../services/contactsService.js';
+import {
+  getAllContacts,
+  getAllContactsCount,
+  getContactById,
+  createContact,
+  updateContact,
+  deleteContact,
+} from '../services/contactsService.js';
 
-// export const getAllContactsController = async (req, res) => {
-//   try {
-//     const userId = req.user._id;
+import { uploadToCloudinary, cloudinaryDestroy } from '../utils/cloudinaryTools.js';
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 
-//     const { page = 1, perPage = 10 } = req.query;
-//     const skip = (page - 1) * perPage;
+// Отримати всі контакти
+const getAllContactsController = async (req, res) => {
+  const userId = req.user._id;
+  const { page = 1, perPage = 10, sortBy = 'createdAt', sortOrder = 'asc' } = req.query;
+  const skip = (page - 1) * perPage;
 
-//     const contacts = await getAllContacts(userId, skip, perPage);
-//     const total = await getAllContactsCount(userId);
-//     const totalPages = Math.ceil(total / perPage);
+  const contacts = await getAllContacts(userId, skip, perPage, sortBy, sortOrder);
+  const total = await getAllContactsCount(userId);
+  const totalPages = Math.ceil(total / perPage);
 
-//     res.status(200).json({
-//       status: 200,
-//       message: 'Successfully found contacts!',
-//       data: {
-//         data: contacts,
-//         page: Number(page),
-//         perPage: perPage,
-//         totalItems: total,
-//         totalPages: totalPages,
-//         hasPreviousPage: Number(page) > 1,
-//         hasNextPage: Number(page) < totalPages,
-//       },
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Server error', error: error.message });
-//   }
-// };
-
-export const getAllContactsController = async (req, res) => {
-  try {
-    const userId = req.user._id;
-
-    const { page = 1, perPage = 10, sortBy = 'createdAt', sortOrder = 'asc' } = req.query;
-    const skip = (page - 1) * perPage;
-
-    const contacts = await getAllContacts(userId, skip, perPage, sortBy, sortOrder);
-    const total = await getAllContactsCount(userId);
-    const totalPages = Math.ceil(total / perPage);
-
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully found contacts!',
-      data: {
-        data: contacts,
-        page: Number(page),
-        perPage: Number(perPage),
-        totalItems: total,
-        totalPages: totalPages,
-        hasPreviousPage: Number(page) > 1,
-        hasNextPage: Number(page) < totalPages,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: {
+      data: contacts,
+      page: Number(page),
+      perPage: Number(perPage),
+      totalItems: total,
+      totalPages,
+      hasPreviousPage: Number(page) > 1,
+      hasNextPage: Number(page) < totalPages,
+    },
+  });
 };
 
-export const getContactByIdController = async (req, res) => {
-  try {
-    const { contactId } = req.params;
-    const userId = req.user._id;
+// Отримати контакт за ID
+const getContactByIdController = async (req, res) => {
+  const { contactId } = req.params;
+  const userId = req.user._id;
 
-    const contact = await getContactById(contactId, userId);
+  const contact = await getContactById(contactId, userId);
 
-    if (!contact) {
-      return res.status(404).json({ message: 'Contact not found' });
+  if (!contact) {
+    return res.status(404).json({ message: 'Contact not found' });
+  }
+
+  res.status(200).json({
+    status: 200,
+    message: `Successfully found contact with id ${contactId}!`,
+    data: contact,
+  });
+};
+
+// Створити новий контакт
+const createContactController = async (req, res) => {
+  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const userId = req.user._id;
+
+  const photo = req.file?.cloudStorageObject || null;
+
+  const newContact = await createContact({
+    name,
+    phoneNumber,
+    email,
+    isFavourite,
+    contactType,
+    userId,
+    photo,
+  });
+
+  res.status(201).json({
+    status: 201,
+    message: 'Contact created successfully!',
+    data: newContact,
+  });
+};
+
+// Оновити контакт
+const updateContactController = async (req, res) => {
+  const { contactId } = req.params;
+  const userId = req.user._id;
+
+  const existingContact = await getContactById(contactId, userId);
+  if (!existingContact) {
+    return res.status(404).json({ message: 'Contact not found' });
+  }
+
+  if (req.file) {
+    if (existingContact.photo?.public_id) {
+      await cloudinaryDestroy(existingContact.photo.public_id);
     }
 
-    res.status(200).json({
-      status: 200,
-      message: `Successfully found contact with id ${contactId}!`,
-      data: contact,
+    const result = await uploadToCloudinary(req.file.buffer, {
+      folder: 'contacts_photos',
     });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+
+    req.body.photo = {
+      url: result.secure_url,
+      public_id: result.public_id,
+    };
   }
+
+  const updatedContact = await updateContact(contactId, userId, req.body);
+  if (!updatedContact) {
+    return res.status(404).json({ message: 'Contact not found' });
+  }
+
+  const cleanContact = updatedContact.toObject?.() || updatedContact;
+  delete cleanContact.__v;
+
+  const photoValue =
+    cleanContact.photo && typeof cleanContact.photo === 'object'
+      ? cleanContact.photo
+      : cleanContact.photo
+      ? { url: cleanContact.photo }
+      : null;
+
+  res.status(200).json({
+    status: 200,
+    message: 'Contact updated successfully!',
+    data: {
+      ...cleanContact,
+      photo: photoValue,
+    },
+  });
 };
 
-export const createContactController = async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const newContact = await createContact({ ...req.body, userId });
+// Видалити контакт
+const deleteContactController = async (req, res) => {
+  const { contactId } = req.params;
+  const userId = req.user._id;
 
-    res.status(201).json({
-      status: 201,
-      message: 'Contact created successfully!',
-      data: newContact,
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+  const deletedContact = await deleteContact(contactId, userId);
+  if (!deletedContact) {
+    return res.status(404).json({ message: 'Contact not found' });
   }
+
+  res.status(204).send();
 };
 
-export const updateContactController = async (req, res) => {
-  try {
-    const { contactId } = req.params;
-    const userId = req.user._id;
-
-
-
-    const updatedContact = await updateContact(contactId, userId, req.body);
-
-
-
-    if (!updatedContact) {
-      return res.status(404).json({ message: 'Contact not found' });
-    }
-
-    const cleanContact = updatedContact.toObject ? updatedContact.toObject() : updatedContact;
-    delete cleanContact.__v;
-
-    res.status(200).json({
-      status: 200,
-      message: 'Contact updated successfully!',
-      data: updatedContact,
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-
-export const deleteContactController = async (req, res) => {
-  try {
-    const { contactId } = req.params;
-    const userId = req.user._id;
-    const deletedContact = await deleteContact(contactId, userId);
-
-    if (!deletedContact) {
-      return res.status(404).json({ message: 'Contact not found' });
-    }
-
-    res.status(204).send();;
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
+// Експорт обгорнутих контролерів
+export const getAllContactsControllerWrapped = ctrlWrapper(getAllContactsController);
+export const getContactByIdControllerWrapped = ctrlWrapper(getContactByIdController);
+export const createContactControllerWrapped = ctrlWrapper(createContactController);
+export const updateContactControllerWrapped = ctrlWrapper(updateContactController);
+export const deleteContactControllerWrapped = ctrlWrapper(deleteContactController);

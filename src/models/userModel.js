@@ -19,7 +19,7 @@ const userSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true } // додає createdAt і updatedAt автоматично
+  { timestamps: true } 
 );
 
 const User = model('User', userSchema);
