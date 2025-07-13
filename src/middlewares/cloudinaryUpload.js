@@ -26,10 +26,10 @@ export const cloudinaryUpload = async (req, res, next) => {
           return next(HttpError(500, 'Cloudinary upload failed'));
         }
 
-        req.file.cloudStorageObject = {
-          url: result.secure_url,
-          public_id: result.public_id,
-        };
+      req.body.photo = {
+  url: result.secure_url,
+  public_id: result.public_id,
+};
 
         next();
       }
