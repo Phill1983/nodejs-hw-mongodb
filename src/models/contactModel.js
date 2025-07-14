@@ -19,16 +19,10 @@ const contactSchema = new Schema(
       ref: 'User',
       required: true,
     },
-   photo: {
-  type: new Schema(
-    {
-      url: { type: String },
-      public_id: { type: String },
-    },
-    { _id: false }
-  ),
+ photo: {
+  type: String,
   default: null,
-},
+}
   },
   { timestamps: true }
 );

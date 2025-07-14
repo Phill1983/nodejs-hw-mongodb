@@ -39,10 +39,7 @@ export const cloudinaryUpload = async (req, res, next) => {
     });
 
     // Зберігаємо результат у req.body
-    req.body.photo = {
-      url: result.secure_url,
-      public_id: result.public_id,
-    };
+  req.body.photo = result.secure_url;
 
     next();
   } catch (error) {

@@ -86,18 +86,20 @@ const updateContactController = async (req, res) => {
   }
 
   if (req.file) {
-    if (existingContact.photo?.public_id) {
-      await cloudinaryDestroy(existingContact.photo.public_id);
+  if (typeof existingContact.photo === 'string') {
+    const fileName = existingContact.photo.split('/').pop();
+    const publicId = fileName?.split('.')[0];
+    
+    if (publicId) {
+      await cloudinaryDestroy(`contacts_photos/${publicId}`);
     }
+  }
 
     const result = await uploadToCloudinary(req.file.buffer, {
       folder: 'contacts_photos',
     });
 
-    req.body.photo = {
-      url: result.secure_url,
-      public_id: result.public_id,
-    };
+    req.body.photo = result.secure_url;
   }
 
   const updatedContact = await updateContact(contactId, userId, req.body);
@@ -108,19 +110,12 @@ const updateContactController = async (req, res) => {
   const cleanContact = updatedContact.toObject?.() || updatedContact;
   delete cleanContact.__v;
 
-  const photoValue =
-    cleanContact.photo && typeof cleanContact.photo === 'object'
-      ? cleanContact.photo
-      : cleanContact.photo
-      ? { url: cleanContact.photo }
-      : null;
-
   res.status(200).json({
     status: 200,
     message: 'Contact updated successfully!',
     data: {
       ...cleanContact,
-      photo: photoValue,
+      photo: cleanContact.photo,
     },
   });
 };
