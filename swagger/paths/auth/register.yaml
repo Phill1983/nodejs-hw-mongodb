@@ -1,0 +1,39 @@
+tags:
+  - Auth
+security:
+  - bearerAuth: []
+summary: Реєстрація нового користувача
+operationId: registerUser
+description: Створює нового користувача й повертає токен
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - email
+          - password
+        properties:
+          name:
+            type: string
+            example: Ім'я
+            description: Ім'я користувача
+          email:
+            type: string
+            format: email
+            example: example@example.com
+            description: Ваш email
+          password:
+            type: string
+            format: password
+            example: password
+            description: Ваш пароль
+responses:
+  '201':
+    $ref: ../../components/responses/user/user_reg_201.yaml
+  '409':
+    description: Conflict - Email вже використовується
+  '400':
+    description: Bad request - Помилка валідації

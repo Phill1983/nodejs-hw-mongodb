@@ -1,0 +1,48 @@
+description: Користувача успішно зареєстровано
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - status
+        - message
+        - data
+      properties:
+        status:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: Користувача успішно зареєстровано!
+        data:
+          type: object
+          required:
+            - _id
+            - name
+            - email
+            - createdAt
+            - updatedAt
+          properties:
+            _id:
+              type: string
+              example: 232981faece27288e1876f53
+              description: User ID
+            name:
+              type: string
+              example: Іван
+              description: Ваше ім'я
+            email:
+              type: string
+              format: email
+              example: example@example.com
+              description: Ваш email
+            createdAt:
+              type: string
+              format: date-time
+              example: 2025-06-05T12:18:02.095Z
+              description: Дата створення користувача
+            updatedAt:
+              type: string
+              format: date-time
+              example: 2025-06-05T12:18:02.095Z
+              description: Дата оновлення користувача

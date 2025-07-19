@@ -1,0 +1,49 @@
+tags:
+  - Auth
+summary: Логін користувача
+operationId: loginUser
+description: Аутентифікація користувача та отримання токена
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+            example: 'example@gmail.com'
+          password:
+            type: string
+            format: password
+security: []
+responses:
+  '200':
+    description: Вхід користувача успішний
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Вхід користувача успішний!'
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: 'M1EiD54qm+x+1+CsC00DpDhukXd1pJaJGYGX0iMv'
+  '401':
+    $ref: '../../components/responses/unauthorised_401.yaml'

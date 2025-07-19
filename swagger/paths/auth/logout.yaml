@@ -1,0 +1,12 @@
+tags:
+  - Auth
+summary: Вихід користувача
+operationId: logoutUser
+description: Скидає токен користувача
+security:
+  - bearerAuth: []
+responses:
+  '204':
+    description: Успішний вихід
+  '401':
+    $ref: '../../components/responses/unauthorised_401.yaml'

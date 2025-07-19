@@ -1,0 +1,51 @@
+tags:
+  - Auth
+security:
+  - bearerAuth: []
+summary: Скинути пароль
+operationId: resetPassword
+description: Скидає пароль за токеном, який був отриманий через email.
+  Email не передається напряму — він витягується з токена.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - token
+          - password
+        properties:
+          token:
+            type: string
+            description: JWT токен для скидання пароля
+            example: 'token'
+          password:
+            type: string
+            description: Новий пароль для облікового запису користувача
+            example: 'examplePassword'
+responses:
+  '200':
+    description: Password successfully reset
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - message
+            - status
+            - data
+          properties:
+            message:
+              type: string
+              example: Пароль успішно змінено!
+            status:
+              type: integer
+              example: 200
+            data:
+              type: object
+              description: Empty object
+  '404':
+    $ref: '../../components/responses/user/user_reg_404.yaml'
+  '401':
+    $ref: '../../components/responses/unauthorised_401.yaml'

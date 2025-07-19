@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import HttpError from '../utils/HttpError.js';
 import User from '../models/userModel.js';
 import Session from '../models/sessionModel.js';
-import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../config.js';
+import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, JWT_RESET_SECRET } from '../config.js';
 
 import transporter from "./email.js";
 
@@ -138,7 +138,7 @@ export const findUserByEmail = async (email) => {
 export const createResetToken = ({ email }) => {
   const payload = { email };
   const options = { expiresIn: "5m" };
-  const token = jwt.sign(payload, process.env.JWT_RESET_SECRET, options);
+  const token = jwt.sign(payload, JWT_RESET_SECRET, options);
   return token;
 };
 
@@ -150,13 +150,20 @@ export const sendResetEmail = async ({ to, resetLink }) => {
     html: `<p>Click the link to reset your password:</p><p><a href="${resetLink}">${resetLink}</a></p>`,
   };
 
+
+  console.log("📨 Preparing to send email...");
+  console.log("📧 From:", process.env.SMTP_FROM);
+  console.log("📩 To:", to);
+
+
+
   try {
     await transporter.sendMail(mailOptions);
     return true;
   } catch (error) {
-
-    return false;
-  }
+  console.error("❌ Email sending failed:", error); // покажемо повну помилку
+  return false;
+}
 };
 
 export const verifyResetToken = async (token) => {

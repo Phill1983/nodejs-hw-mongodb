@@ -1,0 +1,33 @@
+tags:
+  - Contacts
+summary: Створити новий контакт
+operationId: createContact
+description: Додає новий контакт до списку користувача
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+            format: email
+          phoneNumber:
+            type: string
+          favorite:
+            type: boolean
+          photo:
+            type: string
+            format: binary
+responses:
+  '201':
+    description: Контакт створено
+  '400':
+    description: Невірні дані
+  '401':
+    description: Неавторизований

@@ -1,0 +1,31 @@
+tags:
+  - Contacts
+summary: Отримати всі контакти
+operationId: getAllContacts
+description: Повертає список усіх контактів користувача
+security:
+  - bearerAuth: []
+parameters:
+  - name: favorite
+    in: query
+    description: Фільтрувати контакти за статусом "favorite"
+    required: false
+    schema:
+      type: boolean
+  - name: page
+    in: query
+    description: Номер сторінки
+    required: false
+    schema:
+      type: integer
+  - name: limit
+    in: query
+    description: Кількість контактів на сторінці
+    required: false
+    schema:
+      type: integer
+responses:
+  '200':
+    description: Список контактів
+  '401':
+    description: Неавторизований
