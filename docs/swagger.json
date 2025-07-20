@@ -34,15 +34,6 @@
         ],
         "parameters": [
           {
-            "name": "favorite",
-            "in": "query",
-            "description": "Фільтрувати контакти за статусом \"favorite\"",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
             "name": "page",
             "in": "query",
             "description": "Номер сторінки (пагінація)",

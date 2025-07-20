@@ -6,12 +6,12 @@ description: Повертає список усіх контактів кори�
 security:
   - bearerAuth: []
 parameters:
-  - name: favorite
-    in: query
-    description: Фільтрувати контакти за статусом "favorite"
-    required: false
-    schema:
-      type: boolean
+  # - name: favorite
+  #   in: query
+  #   description: Фільтрувати контакти за статусом "favorite"
+  #   required: false
+  #   schema:
+  #     type: boolean
 
   - name: page
     in: query
