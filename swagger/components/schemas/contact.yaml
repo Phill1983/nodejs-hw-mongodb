@@ -48,6 +48,7 @@ properties:
 
   photo:
     type: string
+    format: binary
     description: 'посилання на фото контакта'
     example: 'https://res.cloudinary.com/yourcloud/image/upload/image.jpg'
 
