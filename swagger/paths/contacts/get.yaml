@@ -12,18 +12,43 @@ parameters:
     required: false
     schema:
       type: boolean
+
   - name: page
     in: query
-    description: Номер сторінки
+    description: Номер сторінки (пагінація)
     required: false
     schema:
       type: integer
-  - name: limit
+      default: 1
+      minimum: 1
+
+  - name: perPage
     in: query
-    description: Кількість контактів на сторінці
+    description: Кількість елементів на сторінку
     required: false
     schema:
       type: integer
+      default: 10
+      minimum: 1
+
+  - name: sortBy
+    in: query
+    description: Поле для сортування
+    required: false
+    schema:
+      type: string
+      default: createdAt
+      enum: [name, email, phoneNumber, createdAt]
+
+  - name: sortOrder
+    in: query
+    description: Порядок сортування (asc або desc)
+    required: false
+    schema:
+      type: string
+      default: asc
+      enum: [asc, desc]
+
 responses:
   '200':
     $ref: '../../components/responses/contact/get_all_200.yaml'
