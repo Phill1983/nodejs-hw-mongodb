@@ -26,6 +26,6 @@ parameters:
       type: integer
 responses:
   '200':
-    description: Список контактів
+    $ref: '../../components/responses/contact/get_all_200.yaml'
   '401':
-    description: Неавторизований
+    $ref: '../../components/responses/unauthorised_401.yaml'

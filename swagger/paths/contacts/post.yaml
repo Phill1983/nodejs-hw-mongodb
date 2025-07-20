@@ -10,24 +10,11 @@ requestBody:
   content:
     multipart/form-data:
       schema:
-        type: object
-        properties:
-          name:
-            type: string
-          email:
-            type: string
-            format: email
-          phoneNumber:
-            type: string
-          favorite:
-            type: boolean
-          photo:
-            type: string
-            format: binary
+        $ref: '../../components/schemas/createContact.yaml'
 responses:
   '201':
-    description: Контакт створено
+    $ref: '../../components/responses/contact/contact_201.yaml'
   '400':
-    description: Невірні дані
+    $ref: '../../components/responses/error_400.yaml'
   '401':
-    description: Неавторизований
+    $ref: '../../components/responses/unauthorised_401.yaml'

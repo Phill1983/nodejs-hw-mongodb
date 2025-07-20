@@ -38,7 +38,7 @@ responses:
           properties:
             message:
               type: string
-              example: Пароль успішно змінено!
+              example: Password has been successfully reset.
             status:
               type: integer
               example: 200

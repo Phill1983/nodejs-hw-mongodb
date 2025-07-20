@@ -2,9 +2,8 @@ tags:
   - Auth
 summary: Оновити accessToken
 operationId: refreshSession
-description: Повертає новий accessToken. Очікує refreshToken в cookie111.
-security:
-  - bearerAuth: []
+description: Повертає новий accessToken. Очікує refreshToken в cookie.
+security: []
 responses:
   '200':
     description: Новий accessToken
@@ -22,7 +21,7 @@ responses:
               example: 200
             message:
               type: string
-              example: Сесія успішно оновлена!
+              example: Successfully refreshed a session!
             data:
               type: object
               required:

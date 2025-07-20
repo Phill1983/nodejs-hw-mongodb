@@ -1,0 +1,64 @@
+type: object
+required:
+  - _id
+  - name
+  - phoneNumber
+  - isFavourite
+  - contactType
+  - userId
+  - createdAt
+  - updatedAt
+properties:
+  _id:
+    type: string
+    description: 'Id контакта'
+    example: '65e4decdd286b30065d54af9'
+
+  name:
+    type: string
+    description: 'Імя контакта'
+    example: John Doe
+
+  email:
+    type: string
+    format: email
+    description: 'Email контакта'
+    example: example@example.com
+
+  phoneNumber:
+    type: string
+    description: 'Номер телефона контакта'
+    example: '+380501234567'
+
+  isFavourite:
+    type: boolean
+    description: 'Чи є контакт у вибраних'
+    example: false
+
+  contactType:
+    type: string
+    enum: [work, home, personal]
+    description: 'Тип контакта'
+    example: 'personal'
+
+  userId:
+    type: string
+    description: 'ID власника контакта'
+    example: '65e4decdd286b30065d54af9'
+
+  photo:
+    type: string
+    description: 'посилання на фото контакта'
+    example: 'https://res.cloudinary.com/yourcloud/image/upload/image.jpg'
+
+  createdAt:
+    type: string
+    format: date-time
+    description: 'Date of creation'
+    example: '2024-05-12T12:34:56.789Z'
+
+  updatedAt:
+    type: string
+    format: date-time
+    description: 'Last update date'
+    example: '2024-08-01T10:22:33.123Z'

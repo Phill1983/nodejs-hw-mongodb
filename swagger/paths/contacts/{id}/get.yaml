@@ -14,6 +14,8 @@ parameters:
       type: string
 responses:
   '200':
-    description: Успішна відповідь з контактом
+    $ref: '../../../components/responses/contact/contact_by_id_200.yaml'
+  '401':
+    $ref: '../../../components/responses/unauthorised_401.yaml'
   '404':
-    description: Контакт не знайдено
+    $ref: '../../../components/responses/contact/contact_404.yaml'

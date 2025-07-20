@@ -1,0 +1,31 @@
+type: object
+required:
+  - name
+  - phoneNumber
+  - contactType
+properties:
+  name:
+    type: string
+    description: "Ім'я контакту"
+    example: Василь Гупало
+  phoneNumber:
+    type: string
+    description: 'Номер телефону'
+    example: +380931231231
+  email:
+    type: string
+    description: "Email (необов'язково)"
+    example: example@example.com
+  isFavourite:
+    type: boolean
+    description: 'Контакт у вибраних'
+    example: false
+  contactType:
+    type: string
+    enum: [work, home, personal]
+    description: 'Тип контакту'
+    example: personal
+  photo:
+    type: string
+    format: binary
+    description: 'Фото контакту (файл)'
