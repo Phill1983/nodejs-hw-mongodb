@@ -1,18 +1,19 @@
 type: object
 description: контакт успішно оновлено
-required:
-  - status
-  - message
-  - data
-properties:
-  status:
-    type: integer
-    example: 200
-  message:
-    type: string
-    example: Контакт успішно оновлено!
-  data:
-    type: object
-    properties:
-      contact:
-        $ref: '../../schemas/contact.yaml'
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - status
+        - message
+        - data
+      properties:
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Contact updated successfully!
+        data:
+          $ref: '../../schemas/contact.yaml'
